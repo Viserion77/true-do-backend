@@ -1,0 +1,23 @@
+frameworkVersion: '3'
+service: true-do-infrastructure
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: sa-east-1
+  stage: ${opt:stage, 'dev'}
+  memorySize: 128
+  timeout: 22
+  logRetentionInDays: ${file(../serverless-config.yml):logRetentionInDays.${self:provider.stage}}
+  tracing:
+    apiGateway: false
+    lambda: false
+  versionFunctions: false
+  endpointType: ${env:ENDPOINT_TYPE, 'EDGE'}
+ 
+resources:
+  - ${file(resources/cloudfront.yml)}
+  - ${file(resources/route53.yml)}
+
+custom:
+  domains: ${file(../serverless-config.yml):domains}
+  

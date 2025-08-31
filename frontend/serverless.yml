@@ -1,0 +1,17 @@
+frameworkVersion: '3'
+service: true-do-frontend
+provider: ${file(../serverless-config.yml):provider}
+
+resources:
+  - ${file(resources/s3.yml)}
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  domains: ${file(../serverless-config.yml):domains}
+  s3Sync:
+    - bucketName: true-do-frontend-${self:provider.stage}
+      localDir: dist
+      deleteRemoved: true
+      acl: private

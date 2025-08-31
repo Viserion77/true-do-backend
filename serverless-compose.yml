@@ -1,0 +1,12 @@
+services:
+  global:
+    path: global
+  infrastructure:
+    path: infrastructure
+    dependsOn:
+      - global
+  frontend:
+    path: frontend
+    dependsOn:
+      - infrastructure
+ 

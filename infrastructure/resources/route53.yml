@@ -1,0 +1,12 @@
+Resources:
+  # Registro DNS para o domínio principal
+  TrueDoMainDomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: ${ssm(us-east-1):/true-do/${self:provider.stage}/hosted-zone-id}
+      Name: ${self:custom.domains.${self:provider.stage}}
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt TrueDoCloudFront.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront Hosted Zone ID
+ 

@@ -1,0 +1,8 @@
+Resources:
+  # Hosted Zone para o domínio principal
+  TrueDoHostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: ${self:custom.domains.${self:provider.stage}}
+      HostedZoneConfig:
+        Comment: TrueDo domain for ${self:provider.stage}

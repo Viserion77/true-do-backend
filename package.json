@@ -1,0 +1,22 @@
+{
+  "name": "true-do",
+  "version": "1.0.0",
+  "description": "http://true-do.com/",
+  "main": "index.js",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Viserion77/true-do-backend.git"
+  },
+  "author": "@Viserion77",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Viserion77/true-do-backend/issues"
+  },
+  "homepage": "https://github.com/Viserion77/true-do-backend#readme"
+}

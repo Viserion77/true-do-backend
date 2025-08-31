@@ -1,0 +1,19 @@
+Resources:
+  # Salvar ARN do certificado no SSM para acesso cross-region | uso: ${ssm(us-east-1):/true-do/${self:provider.stage}/ssl-certificate-arn}
+  SSLCertificateParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /true-do/${self:provider.stage}/ssl-certificate-arn
+      Type: String
+      Value: !Ref TrueDoSSLCertificate
+      Description: SSL Certificate ARN for CloudFront
+
+  # Salvar Hosted Zone ID no SSM para acesso cross-region | uso: ${ssm(us-east-1):/true-do/${self:provider.stage}/hosted-zone-id}
+  HostedZoneParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /true-do/${self:provider.stage}/hosted-zone-id
+      Type: String
+      Value: !Ref TrueDoHostedZone
+      Description: Route53 Hosted Zone ID
+  

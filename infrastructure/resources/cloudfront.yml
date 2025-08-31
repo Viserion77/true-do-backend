@@ -1,0 +1,83 @@
+Resources:
+  # CloudFront Distribution para frontend
+  TrueDoCloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - ${self:custom.domains.${self:provider.stage}}
+
+        Origins:
+          # Frontend S3 Origin (com OAC)
+          - Id: S3Origin
+            DomainName: true-do-frontend-${self:provider.stage}.s3.sa-east-1.amazonaws.com
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+            OriginAccessControlId: !GetAtt TrueDoS3OAC.Id
+
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled for SPA
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # Managed-CORS-S3Origin
+          Compress: true
+
+        CacheBehaviors:
+          # Cache Vite assets with hash (long-term cache)
+          - PathPattern: 'assets/*'
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+            Compress: true
+          # Cache static images and icons
+          - PathPattern: '*.png'
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+            Compress: true
+          - PathPattern: '*.svg'
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+            Compress: true
+          - PathPattern: '*.ico'
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+            Compress: true
+
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+
+        DefaultRootObject: index.html
+        Enabled: true
+        PriceClass: PriceClass_100
+
+        ViewerCertificate:
+          AcmCertificateArn: ${ssm(us-east-1):/true-do/${self:provider.stage}/ssl-certificate-arn}
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+
+  # OAC para acesso privado do S3 via CloudFront
+  TrueDoS3OAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: true-do-frontend-oac-${self:provider.stage}
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+Outputs:
+  # Exportar ARN do CloudFront para uso cross-region
+  CloudFrontDistributionArn:
+    Value: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${TrueDoCloudFront}'
+    Export:
+      Name: ${self:service}-${self:provider.stage}-cloudfront-arn

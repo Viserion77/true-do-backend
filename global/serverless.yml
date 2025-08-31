@@ -1,0 +1,16 @@
+frameworkVersion: '3'
+service: true-do-global
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1 # CloudFront requires certificates in us-east-1
+  stage: ${opt:stage, 'dev'}
+  logRetentionInDays: ${file(../serverless-config.yml):logRetentionInDays.${self:provider.stage}}
+
+resources:
+  - ${file(resources/route53.yml)}
+  - ${file(resources/certificateManager.yml)}
+  - ${file(resources/ssm.yml)}
+
+custom:
+  domains: ${file(../serverless-config.yml):domains}

@@ -1,0 +1,13 @@
+{
+  "name": "@true-do/frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "deploy": "npm run build && serverless deploy"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-s3-sync": "^3.2.0"
+  }
+}

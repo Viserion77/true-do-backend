@@ -1,0 +1,11 @@
+Resources:
+  # Certificado SSL global para domínio principal
+  TrueDoSSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: ${self:custom.domains.${self:provider.stage}}
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: ${self:custom.domains.${self:provider.stage}}
+          HostedZoneId: !Ref TrueDoHostedZone
+  

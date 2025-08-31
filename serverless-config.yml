@@ -1,0 +1,28 @@
+domains:
+  prod: true-do.com
+  dev: '-'
+
+pitr: 
+  dev: false 
+  prod: true 
+
+logRetentionInDays: 
+  dev: 7 
+  prod: 30 
+
+provider:
+  name: aws 
+  runtime: nodejs20.x 
+  region: sa-east-1 
+  stage: ${opt:stage, 'dev'} 
+  memorySize: 128 
+  timeout: 22 
+  tracing:
+    apiGateway: false 
+    lambda: false 
+  versionFunctions: false 
+  endpointType: ${env:ENDPOINT_TYPE, 'EDGE'} 
+  logRetentionInDays: ${file(../serverless-config.yml):logRetentionInDays.${self:provider.stage}} 
+  environment:
+    STAGE: ${self:provider.stage}
+    DOMAIN: ${self:custom.domains.${self:provider.stage}}
